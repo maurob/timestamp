@@ -59,10 +59,24 @@ def load():
     L = []
     for line in open(log_file_name):
         if len(line.strip()) > 0:
-            event, str_time = line.split('\t')
+            event, str_time = split(line)
             time = datetime.strptime(str_time.strip(), "%Y-%m-%d %H:%M:%S.%f")
             L.append((event.strip(), time))
     return L
+
+def split(line):
+    """ Split between event name and time """
+    i1 = line.find(' ')
+    i2 = line.find('\t')
+    if i1 == -1: i1 = len(line)
+    if i2 == -1: i2 = len(line)
+    if i1 < i2:
+        i = i1
+    elif i2 < i1:
+        i = i2
+    else:
+        raise ValueError("split doesn't find a ' ' or '\\t' in '%s'" % line.strip())
+    return line[:i].strip(), line[i:].strip()
 
 def verify_insertion(event):
     """ Return True if `event` is `main_end` for a last registered `main_start` and viceversa """
