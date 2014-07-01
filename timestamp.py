@@ -13,6 +13,12 @@ log_file_name = '~/.timestamp_py'
 events = [
     'endday',
     'startday',
+    'almuerzo',
+    'eagle',
+    'eagle-simtool',
+    'misc',
+    'it',
+    'stop',
     ]
 
 
