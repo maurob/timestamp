@@ -2,7 +2,7 @@
 Command line application to timestamp events
 """
 __author__ = 'Mauro Bruni'
-__email___ = 'mauamrbru@gmail.com'
+__email___ = 'maumarbru@gmail.com'
 
 from datetime import datetime
 import sys
@@ -18,12 +18,6 @@ main_start = 'startday'
 events = [
     main_end,
     main_start,
-    'almuerzo',
-    'eagle',
-    'eagle-simtool',
-    'misc',
-    'it',
-    'stop',
     ]
 
 
