@@ -1,0 +1,17 @@
+start	2015-06-22 15:18:21.950729
+end	2015-06-22 15:18:32.780061
+start	2015-06-22 15:21:34.635384
+end	2015-06-22 15:21:37.252467
+start	2015-06-22 15:25:52.956387
+end	2015-06-22 15:34:13.110614
+start	2015-06-22 16:58:37.840697
+end	2015-06-22 19:35:35.936431
+# Descargué el repo
+# Hice funcionar localmente el simulador
+# r4653 Add the standard requirements.txt python module dependencies
+# r4654 Parche: Creo el uso de la variable de entorno 'HOME_SIMULACIONES'
+
+start	2015-06-26 16:47:32.011509
+end	2015-06-26 19:24:53.701352
+# Estuve revisando parte de lo que hizo Poli como canal y BCD y generé un reporte IPython notebook
+

@@ -8,13 +8,13 @@ from datetime import datetime, timedelta
 import sys
 import os
 
-log_file_name = os.path.expanduser('~/.timestamp_py')
-#log_file_name = os.path.expanduser('~/Downloads/timestamp_py')
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+log_file_name = os.path.join(BASE_DIR, 'list.txt')
 
-text_editor = 'emacs'
+text_editor = 'subl'
 
-main_end   = 'endday'
-main_start = 'startday'
+main_end   = 'end'
+main_start = 'start'
 
 events = [
     main_end,
@@ -28,7 +28,35 @@ def show_events():
         print '\t{0}: {1}'.format(i, event)
 
 
+def show_stats():
+    t0 = None
+    a_week = timedelta(days=7)
+    a_day = timedelta(days=1)
+    now = datetime.now()
+    total = timedelta(0)
+    last_week = timedelta(0)
+    last_day = timedelta(0)
+    for event, timestamp in load():
+        if event == main_start:
+            t0 = timestamp
+        elif event == main_end:
+            if t0 is None:
+                raise ValueError('{} missing before {}'.format(main_start, main_end))
+            t = timestamp - t0
+            total += t
+            if (now - t0) < a_week:
+                last_week += t
+            if (now - t0) < a_day:
+                last_day += t
+            t0 = None
+
+    print('Last day:  {}'.format(last_day))
+    print('Last week: {}'.format(last_week))
+    print('Total:     {}'.format(total))
+
 def select(event_id=None):
+    print("Claripy")
+    show_stats()
     try:
         if event_id is None:
             show_events()
@@ -49,11 +77,19 @@ def select(event_id=None):
         print
         exit(0)
 
+def clear_comment(text_line):
+    try:
+        i = text_line.index('#')
+        return text_line[:i]
+    except ValueError:
+        return text_line
+
 def load():
     """ Load `log_file_name` and return an object oriented list """
     L = []
     try:
         for line in open(log_file_name):
+            line = clear_comment(line)
             if len(line.strip()) > 0:
                 event, str_time = split(line)
                 time = datetime.strptime(str_time.strip(), "%Y-%m-%d %H:%M:%S.%f")
@@ -196,3 +232,4 @@ if __name__ == '__main__':
         event_id = select()
 
     stamp(event_id)
+    show_stats()
