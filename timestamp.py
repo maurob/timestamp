@@ -7,11 +7,14 @@ __email___ = 'maumarbru@gmail.com'
 from datetime import datetime, timedelta
 import sys
 import os
+from collections import namedtuple
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 log_file_name = os.path.join(BASE_DIR, 'list.txt')
 
 text_editor = 'subl'
+
+LAST_REPORT = 'LAST_REPORT'
 
 main_end   = 'end'
 main_start = 'start'
@@ -19,6 +22,7 @@ main_start = 'start'
 events = [
     main_end,
     main_start,
+    LAST_REPORT,
     ]
 
 
@@ -27,15 +31,46 @@ def show_events():
     for i, event in enumerate(events):
         print '\t{0}: {1}'.format(i, event)
 
+Period = namedtuple('Period', 'start end')
+
+class Metric(object):
+    def __init__(self):
+        self.periods = []
+
+    def analize(self, start, end):
+        """Analize a new time interval *start* - *end*"""
+        self.periods.append(Period(start, end))
+
+    @property
+    def value(self):
+        """Return the calculated value"""
+
+class WeeklyMeanMetric(Metric):
+    @property
+    def value(self):
+        sum_periods = sum((p.end - p.start for p in self.periods), timedelta(0))
+        return sum_periods.total_seconds() / 3600.0 / self.weeks
+
+    @property
+    def weeks(self):
+        periods = sorted(self.periods)
+        initial = periods[0].start
+        final = periods[-1].end
+        return (final - initial).total_seconds() / timedelta(days=7).total_seconds()
+
+
 
 def show_stats():
     t0 = None
     a_week = timedelta(days=7)
     a_day = timedelta(days=1)
     now = datetime.now()
+    last_report_time = now
+    last_report_accum = timedelta(0)
     total = timedelta(0)
     last_week = timedelta(0)
     last_day = timedelta(0)
+    weekly_mean = WeeklyMeanMetric()
     for event, timestamp in load():
         if event == main_start:
             t0 = timestamp
@@ -44,14 +79,22 @@ def show_stats():
                 raise ValueError('{} missing before {}'.format(main_start, main_end))
             t = timestamp - t0
             total += t
+            weekly_mean.analize(t0, timestamp)
             if (now - t0) < a_week:
                 last_week += t
             if (now - t0) < a_day:
                 last_day += t
+            if t0 > last_report_time:
+                last_report_accum += t
             t0 = None
+        elif event == LAST_REPORT:
+            last_report_time = timestamp
+            last_report_accum = timedelta(0)
 
     print('Last day:  {}'.format(last_day))
     print('Last week: {}'.format(last_week))
+    print('Weekly mean: {} along {} weeks'.format(weekly_mean.value, weekly_mean.weeks))
+    print('Since last report: {}'.format(last_report_accum))
     print('Total:     {}'.format(total))
 
 def select(event_id=None):
@@ -122,17 +165,26 @@ def verify_insertion(event):
     if len(ends) == 0 or starts[-1] > ends[-1]:
         if event == main_end:
             return True
+<<<<<<< HEAD
         else:
             if len(starts) == 0:
                 return True
             print "You'er trying to insert '{0}' when the last registered was at {1}.".format(event, starts[-1])
+=======
+        elif event == main_start:
+            print "You're trying to insert '{0}' when the last registered was at {1}.".format(event, starts[-1])
+>>>>>>> Agrego nuevas métricas y LAST_REPORT
             return False
+        else:
+            return True
     elif len(starts) == 0 or starts[-1] < ends[-1]:
         if event == main_start:
             return True
-        else:
-            print "You'er trying to insert '{0}' when the last registered was at {1}.".format(event, ends[-1])
+        elif event == main_end:
+            print "You're trying to insert '{0}' when the last registered was at {1}.".format(event, ends[-1])
             return False
+        else:
+            return True
     else:
         print "There's no time between {0} and {1}".format(starts[-1], ends[-1])
         return False
