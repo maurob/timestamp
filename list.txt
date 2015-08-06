@@ -63,3 +63,55 @@ start	2015-07-12 13:01:56.712801
 end	2015-07-12 13:52:25.782035
 # He escrito el reporte
 
+start	2015-07-24 15:09:39.146955
+end	2015-07-24 19:19:30.877631
+start   2015-07-26 20:51:40.753695
+end 2015-07-26 21:31:00.922259
+# Estuve probando hacer funcionar pypy con numpy y comparando una FFT entre pypy, python, numpy y numba.
+
+LAST_REPORT 2015-07-26 22:37:00.00
+
+start	2015-07-26 22:37:45.489054
+end	2015-07-26 23:58:05.275464
+# Escribiendo el informe semanal
+
+start	2015-07-27 8:04:01.391408
+end	2015-07-27 16:20:17.196072
+start	2015-07-27 17:00:31.599909
+end	2015-07-27 20:04:25.681774
+# Estuve optimizando una fft para poder usarla en pypy
+start	2015-07-29 06:33:33.551680
+end	2015-07-29 07:44:45.384187
+# Seguí con la comparación entre pypy y numba para ffts funcionales (describiendo todas las operaciones matemáticas en un solo paso) y en casi todo los casos numba funciona mejor pypy pero pypy tiene un caso de fft de 32 muestras que anda un poco más rápido que Numba. Numba logra optimizar FFTs funcionales de 1K cerca del rendimiento de Numpy pero demora varios minutos en optimizar el código con el JIT, en cambio Pypy lo otimiza rápido pero funciona lento (sólo un poco más rápido que CPython).
+
+start	2015-07-30 14:22:50.721793
+end	2015-07-30 19:11:01.515450
+start	2015-07-31 01:59:39.461471
+end	2015-07-31 12:58:57.683191
+start	2015-07-31 3:49:00.211607
+# En base al análisis hecho del rendimiento de cada caso (Pypy o Numba) para cada rango de tamaño de FFT he armado módulo `fft_auto.py` que importa la mejor versión disponible para el caso y elije el caso particular según el tamaño de FFT.
+
+start   2015-07-31 14:22:50.721793
+end	2015-07-31 17:07:52.249683
+start	2015-08-03 15:15:22.564982
+end	2015-08-03 18:04:45.779532
+start	2015-08-03 18:20:31.318007
+end	2015-08-03 18:25:02.095675
+start	2015-08-03 22:40:07.688504
+end	2015-08-04 02:16:09.749080
+start	2015-08-05 14:14:26.831504
+end	2015-08-05 17:38:13.112505
+# He reescrito los reportes de IPython Notebook, limpiado y dejando más coherente la comparación entre los casos para FFTs.
+
+
+LAST_REPORT	2015-08-05 17:39:38.480824
+
+start	2015-08-05 17:39:41.801141
+end	2015-08-05 19:36:47.903239
+start	2015-08-05 21:27:12.551743
+end	2015-08-05 21:33:02.609415
+start	2015-08-05 23:42:06.189825
+end	2015-08-06 00:56:41.841945
+# He agregado Testing a las FFTs y corregido un bug en FFTHardGenerator
+
+
