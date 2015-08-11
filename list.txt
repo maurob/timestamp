@@ -115,3 +115,34 @@ end	2015-08-06 00:56:41.841945
 # He agregado Testing a las FFTs y corregido un bug en FFTHardGenerator
 
 
+start	2015-08-06 12:33:35.426935
+end	2015-08-06 14:43:57.177278
+start	2015-08-06 15:29:42.102828
+end	2015-08-06 15:46:10.565681
+start	2015-08-06 15:55:30.112346
+end	2015-08-06 17:00:05.403347
+# Agrego IFFT, testing y benchmark
+
+start	2015-08-07 12:58:43.563258
+end	2015-08-07 14:36:52.943978
+start	2015-08-07 15:31:03.976836
+end 2015-08-07 18:35:19.347903
+# Comencé con las pruebas de performance general del simulador y la integración de la nueva FFT.
+# Estuvimos hablando con Mario y Hugo de los nuevos trabajos y me puse a armar un resumen de las cosas para la presentación de Modulisst.
+
+start   2015-08-09 22:59:17.592133
+end 2015-08-09 23:45:43.885825
+# Estuve revisando la presentación de Modulisst de Martín dB y coordinando con él y Alfredo.
+
+LAST_REPORT 2015-08-09 23:46:45.407961
+
+start	2015-08-10 14:55:08.808120
+end	2015-08-10 21:50:12.695015
+start   2015-08-11 00:40:03.342554
+end	2015-08-11 01:27:06.011271
+# He integrado la FFT/IFFT hecha a mano e optimizada sea para el caso de Pypy como el de CPython con Numpy y/o Numba
+# He creado yaml_pypy para imitar la funcionalidad de numpy.fromfile en Pypy y un importador automático con yaml_auto.
+# He vuelto a conectar el channel_frequency en channel y corregido lo de YAML
+# He agregado los filtros en el dominio de la frecuencia, y copiado los butter_ipr_* en /home/simulaciones/filters
+# He armado un reporte performance del simulador antes y despues de los cambios, con logueo y sin logueo, y con Pypy o CPython, en simulator_benchmark.html.
+ 
