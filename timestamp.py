@@ -79,11 +79,16 @@ def verify_insertion(event):
     """ Return True if `event` is `main_end` for a last registered `main_start` and viceversa """
     L = load()
     starts = [item[1] for item in L if item[0] == main_start]
+    if len(starts) == 0 and event == main_end:
+        print "You must define at least one '{}' event first".format(main_start)
+        return False
     ends = [item[1] for item in L if item[0] == main_end]
     if len(ends) == 0 or starts[-1] > ends[-1]:
         if event == main_end:
             return True
         else:
+            if len(starts) == 0:
+                return True
             print "You'er trying to insert '{0}' when the last registered was at {1}.".format(event, starts[-1])
             return False
     elif len(starts) == 0 or starts[-1] < ends[-1]:
