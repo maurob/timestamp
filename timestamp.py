@@ -52,12 +52,14 @@ def select(event_id=None):
 def load():
     """ Load `log_file_name` and return an object oriented list """
     L = []
-    for line in open(log_file_name):
-        if len(line.strip()) > 0:
-            event, str_time = split(line)
-            time = datetime.strptime(str_time.strip(), "%Y-%m-%d %H:%M:%S.%f")
-            L.append((event.strip(), time))
-    return L
+    try:
+        for line in open(log_file_name):
+            if len(line.strip()) > 0:
+                event, str_time = split(line)
+                time = datetime.strptime(str_time.strip(), "%Y-%m-%d %H:%M:%S.%f")
+                L.append((event.strip(), time))
+    finally:
+        return L
 
 def split(line):
     """ Split between event name and time """
