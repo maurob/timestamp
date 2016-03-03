@@ -49,13 +49,19 @@ class WeeklyMeanMetric(Metric):
     @property
     def value(self):
         sum_periods = sum((p.end - p.start for p in self.periods), timedelta(0))
-        return sum_periods.total_seconds() / 3600.0 / self.weeks
+        try:
+            return sum_periods.total_seconds() / 3600.0 / self.weeks
+        except ZeroDivisionError:
+            return 0
 
     @property
     def weeks(self):
         periods = sorted(self.periods)
-        initial = periods[0].start
-        final = periods[-1].end
+        try:
+            initial = periods[0].start
+            final = periods[-1].end
+        except IndexError:
+            return 0
         return (final - initial).total_seconds() / timedelta(days=7).total_seconds()
 
 
@@ -93,12 +99,12 @@ def show_stats():
 
     print('Last day:  {}'.format(last_day))
     print('Last week: {}'.format(last_week))
-    print('Weekly mean: {} along {} weeks'.format(weekly_mean.value, weekly_mean.weeks))
-    print('Since last report: {}'.format(last_report_accum))
+    if weekly_mean.weeks >= 1:
+        print('Weekly mean: {} hour/week along {} weeks'.format(weekly_mean.value, weekly_mean.weeks))
     print('Total:     {}'.format(total))
+    print('Since last report: {}'.format(last_report_accum))
 
 def select(event_id=None):
-    print("Claripy")
     show_stats()
     try:
         if event_id is None:
@@ -165,18 +171,11 @@ def verify_insertion(event):
     if len(ends) == 0 or starts[-1] > ends[-1]:
         if event == main_end:
             return True
-<<<<<<< HEAD
         else:
             if len(starts) == 0:
                 return True
             print "You'er trying to insert '{0}' when the last registered was at {1}.".format(event, starts[-1])
-=======
-        elif event == main_start:
-            print "You're trying to insert '{0}' when the last registered was at {1}.".format(event, starts[-1])
->>>>>>> Agrego nuevas métricas y LAST_REPORT
             return False
-        else:
-            return True
     elif len(starts) == 0 or starts[-1] < ends[-1]:
         if event == main_start:
             return True
