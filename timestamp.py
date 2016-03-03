@@ -1,14 +1,17 @@
 """
 Command line application to timestamp events
 """
+import os
+import sys
+from collections import namedtuple
+
+import timeapi
+
+from datetime import timedelta
+
 __author__ = 'Mauro Bruni'
 __email___ = 'maumarbru@gmail.com'
 
-import timeapi
-from datetime import datetime, timedelta
-import sys
-import os
-from collections import namedtuple
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 log_file_name = os.path.join(BASE_DIR, 'list.txt')
@@ -17,14 +20,14 @@ text_editor = 'subl'
 
 LAST_REPORT = 'LAST_REPORT'
 
-main_end   = 'end'
+main_end = 'end'
 main_start = 'start'
 
 events = [
     main_end,
     main_start,
     LAST_REPORT,
-    ]
+]
 
 
 def show_events():
@@ -34,7 +37,9 @@ def show_events():
 
 Period = namedtuple('Period', 'start end')
 
+
 class Metric(object):
+
     def __init__(self):
         self.periods = []
 
@@ -46,10 +51,13 @@ class Metric(object):
     def value(self):
         """Return the calculated value"""
 
+
 class WeeklyMeanMetric(Metric):
+
     @property
     def value(self):
-        sum_periods = sum((p.end - p.start for p in self.periods), timedelta(0))
+        sum_periods = sum(
+            (p.end - p.start for p in self.periods), timedelta(0))
         try:
             return sum_periods.total_seconds() / 3600.0 / self.weeks
         except ZeroDivisionError:
@@ -64,7 +72,6 @@ class WeeklyMeanMetric(Metric):
         except IndexError:
             return 0
         return (final - initial).total_seconds() / timedelta(days=7).total_seconds()
-
 
 
 def show_stats():
@@ -83,7 +90,8 @@ def show_stats():
             t0 = timestamp
         elif event == main_end:
             if t0 is None:
-                raise ValueError('{} missing before {}'.format(main_start, main_end))
+                raise ValueError(
+                    '{} missing before {}'.format(main_start, main_end))
             t = timestamp - t0
             total += t
             weekly_mean.analize(t0, timestamp)
@@ -104,6 +112,7 @@ def show_stats():
         print('Weekly mean: {} hour/week along {} weeks'.format(weekly_mean.value, weekly_mean.weeks))
     print('Total:     {}'.format(total))
     print('Since last report: {}'.format(last_report_accum))
+
 
 def select(event_id=None):
     show_stats()
@@ -127,12 +136,14 @@ def select(event_id=None):
         print
         exit(0)
 
+
 def clear_comment(text_line):
     try:
         i = text_line.index('#')
         return text_line[:i]
     except ValueError:
         return text_line
+
 
 def load():
     """ Load `log_file_name` and return an object oriented list """
@@ -147,19 +158,24 @@ def load():
     finally:
         return L
 
+
 def split(line):
     """ Split between event name and time """
     i1 = line.rfind(' ')
     i2 = line.rfind('\t')
-    if i1 == -1: i1 = len(line)
-    if i2 == -1: i2 = len(line)
+    if i1 == -1:
+        i1 = len(line)
+    if i2 == -1:
+        i2 = len(line)
     if i1 > i2:
         i = i1
     elif i2 > i1:
         i = i2
     else:
-        raise ValueError("split doesn't find a ' ' or '\\t' in '%s'" % line.strip())
+        raise ValueError(
+            "split doesn't find a ' ' or '\\t' in '%s'" % line.strip())
     return line[:i].strip(), line[i:].strip()
+
 
 def verify_insertion(event):
     """ Return True if `event` is `main_end` for a last registered `main_start` and viceversa """
@@ -189,23 +205,26 @@ def verify_insertion(event):
         print "There's no time between {0} and {1}".format(starts[-1], ends[-1])
         return False
 
+
 def stamp(event_id):
     while True:
         if verify_insertion(events[event_id]):
             record = '{0}\t{1}'.format(timeapi.now(str), events[event_id])
             with open(log_file_name, 'a+') as f:
-                f.write(record+'\n')
+                f.write(record + '\n')
             print record
             break
         else:
             print "Timestamp not inserted."
-            answer = raw_input("Do you want to insert the remaining timestamp manually (y/[n])? ")
+            answer = raw_input(
+                "Do you want to insert the remaining timestamp manually (y/[n])? ")
             if len(answer) > 0 and answer.lower() == 'y':
-                os.system(text_editor+' '+log_file_name)
+                os.system(text_editor + ' ' + log_file_name)
                 print "re-trying timestamp ..."
             else:
                 print "Bye bye :/"
                 break
+
 
 def mean_hours_per_day():
     """ Return the mean hours per day using the registered days """
@@ -220,23 +239,25 @@ def mean_hours_per_day():
                 print "Warning: '{0}' is too long for the working day since '{1}' to '{2}'".format(d, t, time)
             else:
                 accum, days = accum + d, days + 1
-    return (accum/days).seconds/3600.0
+    return (accum / days).seconds / 3600.0
 #    return accum.seconds/days
+
 
 def days_hours(time):
     t = time.time()
     d = time.date()
-    days = (d.day-1) + (d.month-1)*30.5 + d.year*365.25
-    hours = t.hour + t.minute/60.0
+    days = (d.day - 1) + (d.month - 1) * 30.5 + d.year * 365.25
+    hours = t.hour + t.minute / 60.0
     if hours < 5.0:
         hours += 24.0
         days -= 1
     return days, hours
 
+
 def plot():
     import pylab as pl
     for event, time in load():
-        color = {main_start:'g*', main_end:'r*'}
+        color = {main_start: 'g*', main_end: 'r*'}
         days, hours = days_hours(time)
         try:
             pl.plot([days], [hours], color[event])
@@ -246,6 +267,7 @@ def plot():
     pl.xlabel('Time [day]')
     pl.ylabel('Day interval [hours]')
     pl.show()
+
 
 def plot2():
     import pylab as pl
@@ -262,12 +284,12 @@ def plot2():
     ihs, fhs = zip(*hs)
     ids, fds = zip(*ds)
     pl.plot(ids, ihs, 'g')
-    pl.plot([ids[0], ids[-1]], [pl.mean(ihs)]*2, 'g--')
+    pl.plot([ids[0], ids[-1]], [pl.mean(ihs)] * 2, 'g--')
     pl.plot(fds, fhs, 'r')
-    pl.plot([fds[0], fds[-1]], [pl.mean(fhs)]*2, 'r--')
+    pl.plot([fds[0], fds[-1]], [pl.mean(fhs)] * 2, 'r--')
     f, i = pl.mean(fhs), pl.mean(ihs)
-    pl.plot([fds[0], fds[-1]], [(f+i)/2]*2, 'b--')
-    print i, f, f-i, (f+i)/2
+    pl.plot([fds[0], fds[-1]], [(f + i) / 2] * 2, 'b--')
+    print i, f, f - i, (f + i) / 2
     std_i, std_f = pl.std(ihs), pl.std(fhs)
     print std_i, std_f
     pl.xlim(ids[0], fds[-1])
