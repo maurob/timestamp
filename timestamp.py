@@ -140,21 +140,22 @@ def load():
         for line in open(log_file_name):
             line = clear_comment(line)
             if len(line.strip()) > 0:
-                event, str_time = split(line)
+                str_time, event = split(line)
                 time = datetime.strptime(str_time.strip(), "%Y-%m-%d %H:%M:%S.%f")
                 L.append((event.strip(), time))
     finally:
+        print(L)
         return L
 
 def split(line):
     """ Split between event name and time """
-    i1 = line.find(' ')
-    i2 = line.find('\t')
+    i1 = line.rfind(' ')
+    i2 = line.rfind('\t')
     if i1 == -1: i1 = len(line)
     if i2 == -1: i2 = len(line)
-    if i1 < i2:
+    if i1 > i2:
         i = i1
-    elif i2 < i1:
+    elif i2 > i1:
         i = i2
     else:
         raise ValueError("split doesn't find a ' ' or '\\t' in '%s'" % line.strip())
@@ -191,7 +192,7 @@ def verify_insertion(event):
 def stamp(event_id):
     while True:
         if verify_insertion(events[event_id]):
-            record = '{0}\t{1}'.format(events[event_id], str(datetime.now()))
+            record = '{0}\t{1}'.format(str(datetime.now()), events[event_id])
             with open(log_file_name, 'a+') as f:
                 f.write(record+'\n')
             print record
