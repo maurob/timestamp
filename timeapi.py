@@ -9,6 +9,7 @@ from datetime import datetime
 
 url = "http://www.timeapi.org/utc/now"
 
+
 def remote_now():
     """ Return the a local time zone datetime or raise an URLError """
     socket = urllib2.urlopen(url)
@@ -16,9 +17,11 @@ def remote_now():
     socket.close()
     return parse(text).replace(tzinfo=tz.tzutc(), microsecond=0).astimezone(tz.tzlocal())
 
+
 def localhost_now():
     """ Return the a local time zone datetime from the localhost """
     return datetime.utcnow().replace(tzinfo=tz.tzutc(), microsecond=0).astimezone(tz.tzlocal())
+
 
 def now(return_type=datetime):
     """ Try with remote_now first, otherwise use localhost_now """
@@ -32,6 +35,6 @@ def now(return_type=datetime):
     else:
         return d
 
+
 def tostr(datetime_obj):
     return datetime_obj.strftime('%Y-%m-%d %H:%M:%S %z')
-
