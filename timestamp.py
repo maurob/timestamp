@@ -4,6 +4,7 @@ Command line application to timestamp events
 __author__ = 'Mauro Bruni'
 __email___ = 'maumarbru@gmail.com'
 
+import timeapi
 from datetime import datetime, timedelta
 import sys
 import os
@@ -70,7 +71,7 @@ def show_stats():
     t0 = None
     a_week = timedelta(days=7)
     a_day = timedelta(days=1)
-    now = datetime.now()
+    now = timeapi.now()
     last_report_time = now
     last_report_accum = timedelta(0)
     total = timedelta(0)
@@ -141,10 +142,9 @@ def load():
             line = clear_comment(line)
             if len(line.strip()) > 0:
                 str_time, event = split(line)
-                time = datetime.strptime(str_time.strip(), "%Y-%m-%d %H:%M:%S.%f")
+                time = timeapi.parse(str_time.strip())
                 L.append((event.strip(), time))
     finally:
-        print(L)
         return L
 
 def split(line):
@@ -192,7 +192,7 @@ def verify_insertion(event):
 def stamp(event_id):
     while True:
         if verify_insertion(events[event_id]):
-            record = '{0}\t{1}'.format(str(datetime.now()), events[event_id])
+            record = '{0}\t{1}'.format(timeapi.now(str), events[event_id])
             with open(log_file_name, 'a+') as f:
                 f.write(record+'\n')
             print record
